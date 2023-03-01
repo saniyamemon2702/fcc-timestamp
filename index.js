@@ -17,20 +17,34 @@ app.get("/", function (req, res) {
 });
 
 // your first API endpoint... 
-app.get("/api/:date", function (req, res) {
-  console.log( `${new Date(parseInt(req.params.date))} ${ new Date(parseInt(req.params.date))!= "Invalid Date"}`);
-   if(new Date(parseInt(req.params.date))!= "Invalid Date"){
+
+app.get("/api/:date?", function (req, res) {
+  // checkpiint
  
-  res.json({ unix: new Date(parseInt(req.params.date)).getTime(), utc: new Date(parseInt(req.params.date)).toUTCString() });
-}else {
-  console.log("hellos");
-  res.json({error:"Invalid Date"});}
-  
-});
+  // console.log( `${Date(req.params.date)}`);
+
+  // empty params
+  if(req.params.date == undefined){
+    res.json({ unix: new Date().getTime(), utc: new Date().toUTCString() });
+  } 
+  // valid date
+  if(new Date(req.params.date).toUTCString()!=='Invalid Date' || new Date(parseInt(req.params.date)).toUTCString()!=='Invalid Date'){
+    // dd-mm-yyyy format
+    if(new Date(req.params.date).toUTCString()!=='Invalid Date'){
+      res.json({ unix:Date.parse(req.params.date)  , utc: new Date(req.params.date).toUTCString() });
+    }else{
+      // unix format
+      res.json({ unix:  parseInt(req.params.date), utc: new Date(parseInt(req.params.date)).toUTCString() });
+    }
+  }
+  // invalid date
+else {
+  res.json({error:"Invalid Date"});
+}  
+})
+;
 
 
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+var listener = app.listen(3000);
